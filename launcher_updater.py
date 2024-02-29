@@ -7,7 +7,6 @@ import tempfile
 import zipfile
 from halo import Halo
 import platform
-import pyfiglet
 import subprocess
 
 def clear_screen():
@@ -17,8 +16,7 @@ def clear_screen():
         os.system('clear')
 
 def welcome_screen():
-    ascii_art = pyfiglet.figlet_format("VL Updater")
-    print(ascii_art)
+    print("======VL UPDATER======")
 
 def get_current_destination():
     return os.getcwd()
@@ -92,8 +90,7 @@ def compare_versions(local_version, online_version):
     return local_version != online_version
 
 def download_launcher():
-    #launcher_url = ""
-    launcher_url = "https://drive.google.com/uc?export=download&id=1-Ml45lrdTVUa4kJXXNh52vAjsw_OTPNQ"
+    launcher_url = "https://dl.dropboxusercontent.com/scl/fi/5jrnlg5yzdgtzzbtfidpf/launcher.zip?rlkey=lxndou25mr1ylsrgfejwnxhxs&dl=0"
     destination = download_file(launcher_url, 'launcher.zip')
     return destination
 
@@ -126,8 +123,11 @@ def main():
             extract_zip(zip_file, os.getcwd())
             update_local_config(online_version)
             print("INFO - Launcher updated successfully to version", online_version)
+            subprocess.run("taskkill /F /T /PID %i" % os.getpid(), shell=True)
+            subprocess.Popen(["launcher_gui.exe"], cwd=os.getcwd())
         else:
             print('INFO - Launcher is up to date!')
+            subprocess.Popen(["launcher_gui.exe"], cwd=os.getcwd())
     except Exception as e:
         print(e)
 

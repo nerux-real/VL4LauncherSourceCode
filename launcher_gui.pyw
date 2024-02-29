@@ -407,7 +407,7 @@ def compare_versions(local_version, online_version):
     return local_version != online_version
 
 def download_launcher():
-    game_url = "https://drive.google.com/uc?export=download&id=1MUIhk9jZIQK8-Fcl2v1QuLl9n1Sp7236" #PUT HERE GAME LINK
+    game_url = "https://dl.dropboxusercontent.com/scl/fi/bc2lo7t4bksq8hb5m1ckk/game.zip?rlkey=dy1ifw71jbhxi1lef035anew8&dl=0" #PUT HERE GAME LINK
     destination = download_file(game_url, 'game.zip')
     return destination
 
@@ -569,5 +569,15 @@ def main():
 
     root.mainloop()
 
+def check_started_from_launcher():
+    if (len(sys.argv) > 0 and ('launcher_updater.exe' in sys.argv[0].lower() or 'launcher_updater.py' in sys.argv[0].lower())) \
+            or ('launcher_updater.exe' in sys.executable.lower() or 'launcher_updater.py' in sys.executable.lower()):
+        return True
+    else:
+        return False
+
 if __name__ == "__main__":
+    if not check_started_from_launcher():
+        print("This application must be started from launcher_updater.exe or launcher_updater.py.")
+        sys.exit(1)
     main()

@@ -5,7 +5,7 @@ a = Analysis(
     ['launcher_gui.pyw'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\NERUX\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\pyfiglet\\fonts', 'pyfiglet/fonts')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
