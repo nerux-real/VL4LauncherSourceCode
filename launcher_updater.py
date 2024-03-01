@@ -8,6 +8,7 @@ import zipfile
 from halo import Halo
 import platform
 import subprocess
+import psutil
 
 def clear_screen():
     if platform.system() == 'Windows':
@@ -103,9 +104,20 @@ def update_local_config(new_version):
     with open('config.ini', 'w') as config_file:
         config.write(config_file)
 
+def terminate_process():
+    process_name = "launcher_gui.exe"
+    for proc in psutil.process_iter():
+        if proc.name() == process_name:
+            proc.terminate()
+            print(f"INFO - Process {process_name} terminated successfully.")
+            return True
+    print(f"Process {process_name} not found.")
+    return False
+
 def main():
     clear_screen()
     welcome_screen()
+    terminate_process()
     try:
         config = configparser.ConfigParser()
         config.read('config.ini')
@@ -123,11 +135,12 @@ def main():
             extract_zip(zip_file, os.getcwd())
             update_local_config(online_version)
             print("INFO - Launcher updated successfully to version", online_version)
-            subprocess.run("taskkill /F /T /PID %i" % os.getpid(), shell=True)
-            subprocess.Popen(["launcher_gui.exe"], cwd=os.getcwd())
+            current_pid = os.getpid()
+            subprocess.Popen(["launcher_gui.exe", str(current_pid)], cwd=os.getcwd())
         else:
             print('INFO - Launcher is up to date!')
-            subprocess.Popen(["launcher_gui.exe"], cwd=os.getcwd())
+            current_pid = os.getpid()
+            subprocess.Popen(["launcher_gui.exe", str(current_pid)], cwd=os.getcwd())
     except Exception as e:
         print(e)
 

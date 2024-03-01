@@ -5,9 +5,7 @@ import time
 import os
 import tempfile
 import zipfile
-from halo import Halo
 import platform
-import pyfiglet
 import tkinter as tk
 from tkinter import simpledialog
 import json
@@ -19,6 +17,8 @@ from tkinter import messagebox, Text, Scrollbar
 import customtkinter
 import threading
 import random
+import psutil
+import gdown
 
 customtkinter.set_appearance_mode("dark")
 
@@ -154,61 +154,24 @@ def set_startup_ram():
     dialog.withdraw()
     dialog.resizable(False, False)
 
-    ram = customtkinter.CTkInputDialog(title="RAM", text="Set your game ram:\n1. 3072 (3GB)\n2. 4096 (4GB)\n3. 5120 (5GB) (Recommended)\n4. 6144 (6GB)\n5. 7168 (7GB)")
+    ram = customtkinter.CTkInputDialog(title="RAM", text="Set your game ram (Choose 1,2,3,4,5 or enter manually in mb):\n1. 3072 (3GB)\n2. 4096 (4GB)\n3. 5120 (5GB) (Recommended)\n4. 6144 (6GB)\n5. 7168 (7GB)")
     ram_value = ram.get_input()
 
     if not ram_value:
         ram_value = "4096"
 
-    current_directory = os.getcwd()
-    config_file = os.path.join(current_directory, "assets", "UltimMC", "ultimmc.cfg")
-    config_file2 = os.path.join(current_directory, "assets", "UltimMC", "instances", "VL4", "instance.cfg")
-
-    with open(config_file, 'r') as f:
-        lines = f.readlines()
-
-    new_lines = []
-    for line in lines:
-        if line.startswith("MaxMemAlloc="):
-            line = f"MaxMemAlloc={ram_value}\n"
-        elif line.startswith("MinMemAlloc="):
-            line = f"MinMemAlloc={ram_value}\n"
-        new_lines.append(line)
-
-    with open(config_file, 'w') as f:
-        f.writelines(new_lines)
-
-    with open(config_file2, 'r') as f:
-        lines = f.readlines()
-
-    new_lines = []
-    for line in lines:
-        if line.startswith("MaxMemAlloc="):
-            line = f"MaxMemAlloc={ram_value}\n"
-        elif line.startswith("MinMemAlloc="):
-            line = f"MinMemAlloc={ram_value}\n"
-        new_lines.append(line)
-
-    with open(config_file2, 'w') as f:
-        f.writelines(new_lines)
-
-    with open('config.ini', 'r+') as f:
-        lines = f.readlines()
-        for i, line in enumerate(lines):
-            if line.startswith("ram = "):
-                lines[i] = f"ram = {ram_value}\n"
-                break
-        f.seek(0)
-        f.writelines(lines)
-        f.truncate()
-
-    send_log(f"INFO - Successfully set RAM to {ram_value}!")
-
-#not working
-def update_ram_config(event):
-    selected_option = selected_ram.get()
-    ram_value = int(selected_option.split()[0])
-    print(ram_value)
+    if ram_value == "1" or ram_value == "1.":
+        ram_value = "3072"
+    elif ram_value == "2" or ram_value == "2.":
+        ram_value = "4096"
+    elif ram_value == "3" or ram_value == "3.":
+        ram_value = "5120"  
+    elif ram_value == "4" or ram_value == "4.":
+        ram_value = "6144"
+    elif ram_value == "5" or ram_value == "5.":
+        ram_value = "7168"
+    else:
+        ram_value = "4096"
 
     current_directory = os.getcwd()
     config_file = os.path.join(current_directory, "assets", "UltimMC", "ultimmc.cfg")
@@ -341,21 +304,43 @@ def download_file(url, filename):
         response = requests.get(url, stream=True)
         response.raise_for_status()
 
-        temp_dir = tempfile.mkdtemp()
-        destination = os.path.join(temp_dir, filename)
+        destination = os.path.join(os.getcwd(), filename)
 
         total_size = int(response.headers.get('content-length', 0))
-        block_size = 1024  # 1 KB blocks
+        block_size = 4096  # 1 KB blocks
+        #downloaded_size = 0
+        #start_time = time.time()
 
-        with open(destination, 'wb') as file, tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024) as progress_bar:
-            for data in response.iter_content(block_size):
-                file.write(data)
-                progress_bar.update(len(data))
+        try:
+            with open(destination, 'wb') as file:
+                if file is not None:
+                    #progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024)
+                    send_log('INFO - Downloading game... Please wait and be patient ;)')
+                    #progress_bar.pack(side=tk.BOTTOM, fill=tk.X)
+                    #progress_bar.set(0)
+                    for data in response.iter_content(block_size):
+                        if data:
+                            file.write(data)
+                            #downloaded_size += len(data)
+                            #progress = int((downloaded_size / total_size) * 100)
+                            #elapsed_time = time.time() - start_time
+                            #download_speed = downloaded_size / (1024 * elapsed_time)  # Speed in KB/s
+                            #send_log(f"Downloading game... {progress}% ({downloaded_size}/{total_size} bytes), Speed: {download_speed:.2f} KB/s")
+                            #progress_bar['value'] = progress
+                            #progress_bar.update()
+                        else:
+                            send_log("ERROR - Download data not found!")
+                            progress_bar.pack_forget()
+        except Exception as e:
+            send_log(f"ERROR - {e}")
+            progress_bar.pack_forget()
 
         send_log("INFO - Download complete!")
+        progress_bar.pack_forget()
         return destination
     except requests.exceptions.RequestException as e:
-        send_log('ERROR - ', e)
+        send_log(f'ERROR - {e}')
+        progress_bar.pack_forget()
 
 def extract_zip(zip_file, destination):
     try:
@@ -365,18 +350,26 @@ def extract_zip(zip_file, destination):
 
         with zipfile.ZipFile(zip_file, 'r') as zip_ref:
             total_size = sum(file.file_size for file in zip_ref.infolist())
-            extracted_size = 0
-            progress_bar = tqdm(total=total_size, unit="B", unit_scale=True)
+            #extracted_size = 0
+            #progress_bar = tqdm(total=total_size, unit="B", unit_scale=True)
 
             for file in zip_ref.infolist():
                 zip_ref.extract(file, destination)
-                extracted_size += file.file_size
-                progress_bar.update(file.file_size)
+                #extracted_size += file.file_size
+                #progress_bar.update(file.file_size)
+                send_log(f"Extracting game... Please be patient ;)")
 
-            progress_bar.close()
+            #progress_bar.close()
             send_log('INFO - Extraction completed!')
+            try:
+                game_zip_path = os.path.join(os.getcwd(), "game.zip")
+                if os.path.exists(game_zip_path):
+                    os.remove(game_zip_path)
+                send_log("INFO - Successfully deleted temp files!")
+            except Exception as e:
+                send_log(f"ERROR - {e}")
     except zipfile.BadZipFile as e:
-        send_log("ERROR - ", e)
+        send_log(f"ERROR - {e}")
 
 def fetch_local_version():
     config = configparser.ConfigParser()
@@ -385,8 +378,6 @@ def fetch_local_version():
     return local_version
 
 def fetch_version_info():
-    #spinner = Halo(text='Fetching game version info', spinner='dots')
-    #spinner.start()
     send_log("INFO - Fetching game version info")
     time.sleep(2)
 
@@ -408,6 +399,7 @@ def compare_versions(local_version, online_version):
 
 def download_launcher():
     game_url = "https://dl.dropboxusercontent.com/scl/fi/bc2lo7t4bksq8hb5m1ckk/game.zip?rlkey=dy1ifw71jbhxi1lef035anew8&dl=0" #PUT HERE GAME LINK
+    #game_url = "https://jekabpils-my.sharepoint.com/personal/mariuss_krasavcevs_edu_jekabpils_lv/_layouts/15/download.aspx?UniqueId=79fad2d3-45ed-40f9-aaa7-83690140ba0e"
     destination = download_file(game_url, 'game.zip')
     return destination
 
@@ -427,6 +419,7 @@ def change_runtime():
     set_default_java(False)
 
 def check_updates():
+    buttons_busy()
     send_log("INFO - Checking for updates...")
     time.sleep(2)
     try:
@@ -445,7 +438,7 @@ def check_updates():
             zip_file = download_launcher()
             extract_zip(zip_file, os.getcwd())
             update_local_config(online_version)
-            send_log("INFO - Game updated successfully to version", online_version)
+            send_log(f"INFO - Game updated successfully to version {online_version}")
             time.sleep(5)
             check_first_startup()
         else:
@@ -456,12 +449,24 @@ def check_updates():
     except Exception as e:
         send_log(f"ERROR - {e}")
 
+def install_redist():
+    send_log("Installing Java 21...")
+    current_directory = os.getcwd()
+    java_file = os.path.join(current_directory, "assets", "redist", "jdk-21_windows-x64_bin.msi")
+    #subprocess.call(['msiexec', '/i', java_file, '/quiet', '/norestart'])
+    #subprocess.call(['msiexec', '/i', java_file, '/norestart'])
+    subprocess.call(['msiexec', '/i', java_file, '/passive', '/norestart'])
+    send_log("Successfully installed Java 21!")
+
 def check_first_startup():
+    buttons_busy()
     config = configparser.ConfigParser()
     config.read('config.ini')
     first_start = config.get('OTHER', 'fse')
     if first_start == "7":
         send_log("INFO - Starting first stratup screen...")
+        #REDIST JAVA
+        install_redist()
         # username input and generate data
         set_username()
         #RAM
@@ -479,10 +484,15 @@ def check_first_startup():
             config.write(config_file)
 
         send_log("INFO - Changes applied!")
+        buttons_ready()
         send_log("INFO - Game is ready!")
+    else:
+        buttons_ready()
 
 def exit_launcher():
     root.destroy()
+    subprocess.call(['taskkill', '/F', '/IM', 'launcher_gui.exe'])
+    subprocess.call(['taskkill', '/F', '/IM', 'python.exe'])
 
 def set_default_ram():
     current_directory = os.getcwd()
@@ -499,10 +509,32 @@ def set_default_ram():
     if ram_value:
         selected_ram.set(ram_value)
 
+def open_minecraft_folder():
+    current_directory = os.getcwd()
+    minecraft_folder = os.path.join(current_directory, "assets", "UltimMC", "instances", "VL4", ".minecraft")
+    os.startfile(minecraft_folder)
+
+def buttons_ready():
+    start_button.configure(state=tk.NORMAL)
+    change_username_button.configure(state=tk.NORMAL)
+    set_ram_button.configure(state=tk.NORMAL)
+    #change_runtime_button.configure(state=tk.NORMAL)
+    check_updates_button.configure(state=tk.NORMAL)
+    open_minecraft_folder_button.configure(state=tk.NORMAL)
+
+def buttons_busy():
+    start_button.configure(state=tk.DISABLED)
+    change_username_button.configure(state=tk.DISABLED)
+    set_ram_button.configure(state=tk.DISABLED)
+    #change_runtime_button.configure(state=tk.DISABLED)
+    check_updates_button.configure(state=tk.DISABLED)
+    open_minecraft_folder_button.configure(state=tk.DISABLED)
+
+
 root = customtkinter.CTk()
 root.title("VL4 Launcher")
 root.resizable(False, False)
-root.geometry("700x320")
+root.geometry("800x340")
 
 log_frame = customtkinter.CTkFrame(root)
 log_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -516,23 +548,31 @@ button_frame = customtkinter.CTkFrame(root)
 button_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
 
-start_button = customtkinter.CTkButton(button_frame, text="Start Game", command=start_current_game)
+start_button = customtkinter.CTkButton(button_frame, text="Start Game", command=start_current_game, state=tk.DISABLED)
 start_button.pack(fill=tk.X)
 
-change_username_button = customtkinter.CTkButton(button_frame, text="Change Username", command=change_username)
+change_username_button = customtkinter.CTkButton(button_frame, text="Change Username", command=change_username, state=tk.DISABLED)
 change_username_button.pack(fill=tk.X)
 
-set_ram_button = customtkinter.CTkButton(button_frame, text="Allocate RAM", command=set_startup_ram)
+set_ram_button = customtkinter.CTkButton(button_frame, text="Allocate RAM", command=set_startup_ram, state=tk.DISABLED)
 set_ram_button.pack(fill=tk.X)
 
-change_runtime_button = customtkinter.CTkButton(button_frame, text="Change Runtime", command=change_runtime)
-change_runtime_button.pack(fill=tk.X)
+#change_runtime_button = customtkinter.CTkButton(button_frame, text="Change Runtime", command=change_runtime, state=tk.DISABLED)
+#change_runtime_button.pack(fill=tk.X)
 
-check_updates_button = customtkinter.CTkButton(button_frame, text="Check Updates", command=check_updates)
+open_minecraft_folder_button = customtkinter.CTkButton(button_frame, text="Open .minecraft folder", command=open_minecraft_folder, state=tk.DISABLED)
+open_minecraft_folder_button.pack(fill=tk.X)
+
+check_updates_button = customtkinter.CTkButton(button_frame, text="Check Updates", command=check_updates, state=tk.DISABLED)
 check_updates_button.pack(fill=tk.X)
 
 exit_button = customtkinter.CTkButton(button_frame, text="Exit Launcher", command=exit_launcher)
 exit_button.pack(fill=tk.X)
+
+progress_bar = customtkinter.CTkProgressBar(button_frame, mode='determinate')
+progress_bar.set(0)
+progress_bar.pack_forget()
+
 
 #ram_options = [
 #    "3072 (3GB)",
@@ -569,15 +609,13 @@ def main():
 
     root.mainloop()
 
-def check_started_from_launcher():
-    if (len(sys.argv) > 0 and ('launcher_updater.exe' in sys.argv[0].lower() or 'launcher_updater.py' in sys.argv[0].lower())) \
-            or ('launcher_updater.exe' in sys.executable.lower() or 'launcher_updater.py' in sys.executable.lower()):
-        return True
-    else:
-        return False
-
 if __name__ == "__main__":
-    if not check_started_from_launcher():
-        print("This application must be started from launcher_updater.exe or launcher_updater.py.")
+    if len(sys.argv) > 1:
+        pass
+    else:
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showerror("Error", "Parent process information missing. Try starting launcher from launcher_updater.exe")
         sys.exit(1)
+
     main()
