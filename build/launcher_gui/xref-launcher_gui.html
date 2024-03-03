@@ -171,6 +171,7 @@ imports:
  &#8226;   <a href="#pyi_rth_pkgres.py">pyi_rth_pkgres.py</a>
  &#8226;   <a href="#pyi_rth_pkgutil.py">pyi_rth_pkgutil.py</a>
  &#8226;   <a href="#pyi_rth_setuptools.py">pyi_rth_setuptools.py</a>
+ &#8226;   <a href="#pypresence">pypresence</a>
  &#8226;   <a href="#random">random</a>
  &#8226;   <a href="#re">re</a>
  &#8226;   <a href="#re._casefix">re._casefix</a>
@@ -179,6 +180,7 @@ imports:
  &#8226;   <a href="#re._parser">re._parser</a>
  &#8226;   <a href="#reprlib">reprlib</a>
  &#8226;   <a href="#requests">requests</a>
+ &#8226;   <a href="#shutil">shutil</a>
  &#8226;   <a href="#sre_compile">sre_compile</a>
  &#8226;   <a href="#sre_constants">sre_constants</a>
  &#8226;   <a href="#sre_parse">sre_parse</a>
@@ -4038,6 +4040,8 @@ imported by:
  &#8226;   <a href="#asyncio.unix_events">asyncio.unix_events</a>
  &#8226;   <a href="#asyncio.windows_events">asyncio.windows_events</a>
  &#8226;   <a href="#asyncio.windows_utils">asyncio.windows_utils</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
  &#8226;   <a href="#unittest.async_case">unittest.async_case</a>
  &#8226;   <a href="#unittest.mock">unittest.mock</a>
 
@@ -14646,6 +14650,8 @@ imported by:
  &#8226;   <a href="#pyparsing.diagram">pyparsing.diagram</a>
  &#8226;   <a href="#pyparsing.exceptions">pyparsing.exceptions</a>
  &#8226;   <a href="#pyparsing.util">pyparsing.util</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
  &#8226;   <a href="#rlcompleter">rlcompleter</a>
  &#8226;   <a href="#setuptools">setuptools</a>
  &#8226;   <a href="#setuptools._vendor.jaraco.functools">setuptools._vendor.jaraco.functools</a>
@@ -14969,6 +14975,11 @@ imported by:
  &#8226;   <a href="#json.encoder">json.encoder</a>
  &#8226;   <a href="#json.scanner">json.scanner</a>
  &#8226;   <a href="#launcher_gui.pyw">launcher_gui.pyw</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
  &#8226;   <a href="#requests.compat">requests.compat</a>
  &#8226;   <a href="#setuptools.config._validate_pyproject.error_reporting">setuptools.config._validate_pyproject.error_reporting</a>
  &#8226;   <a href="#setuptools.msvc">setuptools.msvc</a>
@@ -16553,6 +16564,11 @@ imported by:
  &#8226;   <a href="#pyi_rth_pkgres.py">pyi_rth_pkgres.py</a>
  &#8226;   <a href="#pyi_rth_setuptools.py">pyi_rth_setuptools.py</a>
  &#8226;   <a href="#pyparsing.core">pyparsing.core</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
  &#8226;   <a href="#random">random</a>
  &#8226;   <a href="#requests.auth">requests.auth</a>
  &#8226;   <a href="#requests.sessions">requests.sessions</a>
@@ -19346,6 +19362,173 @@ imported by:
  &#8226;   <a href="#pyparsing.core">pyparsing.core</a>
  &#8226;   <a href="#pyparsing.exceptions">pyparsing.exceptions</a>
  &#8226;   <a href="#pyparsing.helpers">pyparsing.helpers</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="pypresence"></a>
+  <a target="code" href="///C:/Users/NERUX/AppData/Local/Programs/Python/Python311/Lib/site-packages/pypresence/__init__.py" type="text/plain"><tt>pypresence</tt></a>
+<span class="moduletype">Package</span>  <div class="import">
+imports:
+    <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.exceptions">pypresence.exceptions</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#launcher_gui.pyw">launcher_gui.pyw</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.exceptions">pypresence.exceptions</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="pypresence.baseclient"></a>
+  <a target="code" href="///C:/Users/NERUX/AppData/Local/Programs/Python/Python311/Lib/site-packages/pypresence/baseclient.py" type="text/plain"><tt>pypresence.baseclient</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#asyncio">asyncio</a>
+ &#8226;   <a href="#inspect">inspect</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pypresence">pypresence</a>
+ &#8226;   <a href="#pypresence.exceptions">pypresence.exceptions</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
+ &#8226;   <a href="#struct">struct</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#tempfile">tempfile</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#pypresence">pypresence</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="pypresence.client"></a>
+  <a target="code" href="///C:/Users/NERUX/AppData/Local/Programs/Python/Python311/Lib/site-packages/pypresence/client.py" type="text/plain"><tt>pypresence.client</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#inspect">inspect</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pypresence">pypresence</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.exceptions">pypresence.exceptions</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#struct">struct</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#pypresence">pypresence</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="pypresence.exceptions"></a>
+  <a target="code" href="///C:/Users/NERUX/AppData/Local/Programs/Python/Python311/Lib/site-packages/pypresence/exceptions.py" type="text/plain"><tt>pypresence.exceptions</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#pypresence">pypresence</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#pypresence">pypresence</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="pypresence.payloads"></a>
+  <a target="code" href="///C:/Users/NERUX/AppData/Local/Programs/Python/Python311/Lib/site-packages/pypresence/payloads.py" type="text/plain"><tt>pypresence.payloads</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#json">json</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pypresence">pypresence</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
+ &#8226;   <a href="#time">time</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="pypresence.presence"></a>
+  <a target="code" href="///C:/Users/NERUX/AppData/Local/Programs/Python/Python311/Lib/site-packages/pypresence/presence.py" type="text/plain"><tt>pypresence.presence</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#json">json</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pypresence">pypresence</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
+ &#8226;   <a href="#time">time</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#pypresence">pypresence</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="pypresence.utils"></a>
+  <a target="code" href="///C:/Users/NERUX/AppData/Local/Programs/Python/Python311/Lib/site-packages/pypresence/utils.py" type="text/plain"><tt>pypresence.utils</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#asyncio">asyncio</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#pypresence">pypresence</a>
+ &#8226;   <a href="#pypresence.exceptions">pypresence.exceptions</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#tempfile">tempfile</a>
+ &#8226;   <a href="#time">time</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
 
   </div>
 
@@ -24466,6 +24649,7 @@ imported by:
  &#8226;   <a href="#gdown.cached_download">gdown.cached_download</a>
  &#8226;   <a href="#gdown.download">gdown.download</a>
  &#8226;   <a href="#http.server">http.server</a>
+ &#8226;   <a href="#launcher_gui.pyw">launcher_gui.pyw</a>
  &#8226;   <a href="#multiprocessing.util">multiprocessing.util</a>
  &#8226;   <a href="#pkg_resources._vendor.jaraco.context">pkg_resources._vendor.jaraco.context</a>
  &#8226;   <a href="#psutil._compat">psutil._compat</a>
@@ -25098,6 +25282,8 @@ imported by:
  &#8226;   <a href="#platform">platform</a>
  &#8226;   <a href="#plistlib">plistlib</a>
  &#8226;   <a href="#psutil._compat">psutil._compat</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
  &#8226;   <a href="#requests.utils">requests.utils</a>
  &#8226;   <a href="#setuptools._vendor.packaging._manylinux">setuptools._vendor.packaging._manylinux</a>
  &#8226;   <a href="#setuptools._vendor.packaging._musllinux">setuptools._vendor.packaging._musllinux</a>
@@ -25406,6 +25592,8 @@ imported by:
  &#8226;   <a href="#pyparsing.exceptions">pyparsing.exceptions</a>
  &#8226;   <a href="#pyparsing.helpers">pyparsing.helpers</a>
  &#8226;   <a href="#pyparsing.unicode">pyparsing.unicode</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
  &#8226;   <a href="#quopri">quopri</a>
  &#8226;   <a href="#re._compiler">re._compiler</a>
  &#8226;   <a href="#requests.compat">requests.compat</a>
@@ -25644,6 +25832,8 @@ imported by:
  &#8226;   <a href="#pkg_resources._vendor.importlib_resources._common">pkg_resources._vendor.importlib_resources._common</a>
  &#8226;   <a href="#pkg_resources._vendor.jaraco.context">pkg_resources._vendor.jaraco.context</a>
  &#8226;   <a href="#pydoc">pydoc</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
  &#8226;   <a href="#requests.utils">requests.utils</a>
  &#8226;   <a href="#setuptools._distutils.ccompiler">setuptools._distutils.ccompiler</a>
  &#8226;   <a href="#setuptools._distutils.util">setuptools._distutils.util</a>
@@ -25827,6 +26017,9 @@ imported by:
  &#8226;   <a href="#psutil">psutil</a>
  &#8226;   <a href="#psutil._pswindows">psutil._pswindows</a>
  &#8226;   <a href="#pydoc">pydoc</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
+ &#8226;   <a href="#pypresence.presence">pypresence.presence</a>
+ &#8226;   <a href="#pypresence.utils">pypresence.utils</a>
  &#8226;   <a href="#queue">queue</a>
  &#8226;   <a href="#random">random</a>
  &#8226;   <a href="#requests.auth">requests.auth</a>
@@ -26668,6 +26861,9 @@ imported by:
  &#8226;   <a href="#pyparsing.testing">pyparsing.testing</a>
  &#8226;   <a href="#pyparsing.unicode">pyparsing.unicode</a>
  &#8226;   <a href="#pyparsing.util">pyparsing.util</a>
+ &#8226;   <a href="#pypresence.baseclient">pypresence.baseclient</a>
+ &#8226;   <a href="#pypresence.client">pypresence.client</a>
+ &#8226;   <a href="#pypresence.payloads">pypresence.payloads</a>
  &#8226;   <a href="#setuptools._path">setuptools._path</a>
  &#8226;   <a href="#setuptools._vendor.importlib_metadata">setuptools._vendor.importlib_metadata</a>
  &#8226;   <a href="#setuptools._vendor.importlib_metadata._compat">setuptools._vendor.importlib_metadata._compat</a>

@@ -19,8 +19,28 @@ import threading
 import random
 import psutil
 import gdown
+from pypresence import Presence
+import shutil
 
 customtkinter.set_appearance_mode("dark")
+
+def check_discord_process():
+    for process in psutil.process_iter(['name']):
+        if process.info['name'] == 'Discord.exe':
+            return True
+    return False
+
+def start_discord_presence():
+    if check_discord_process():
+        client_id = '1213446048203276308'
+        RPC = Presence(client_id)
+        RPC.connect()
+        RPC.update(
+            state="In a game",
+            details="Playing VL SMP",
+            large_image="vlll",
+            large_text="VL Launcher",
+        )
 
 def send_log(message):
     if threading.current_thread() is threading.main_thread():
@@ -33,12 +53,20 @@ def send_log(message):
 
 def welcome_screen():
     send_log("Welcome to VL Launcher GUI!")
-    send_log("==================")
-    send_log(f"Version: {fetch_local_version()}")
-    send_log("==================")
+    send_log('========================')
+    send_log(f"Launcher Version: {fetch_launcher_local_version()}")
+    send_log('========================')
+    send_log(f"Game Version: {fetch_local_version()}")
+    send_log('========================')
+    send_log(f"Modpack Version: {fetch_local_mod_version()}")
+    send_log('========================')
+    send_log(f"Skins Version: {fetch_local_skin_version()}")
+    send_log('========================')
+
     send_log("---------------------------------------------------------")
     send_log(f"Total time played on VL4: {get_time_played()}")
     send_log("---------------------------------------------------------")
+
 
 def get_current_destination():
     return os.getcwd()
@@ -50,23 +78,10 @@ def start_current_game():
     arguments = [
         "-d", directory_path,
         "-l", "VL4",
-        "-s", "87.98.151.230:25584"
+        "-s", "37.230.138.199:25581"
     ]
 
     subprocess.Popen([executable_path] + arguments)
-
-def default_screen():
-    clear_screen()
-    welcome_screen()
-    send_log('==================')
-    send_log(f"Version {fetch_local_version()}")
-    send_log('==================')
-
-    send_log('-------------------------------------------------')
-    send_log(f"Total time played on VL4: {get_time_played()}")
-    send_log('-------------------------------------------------')
-
-    default_choices()
 
 def set_username():
     dialog = customtkinter.CTk()
@@ -315,7 +330,7 @@ def download_file(url, filename):
             with open(destination, 'wb') as file:
                 if file is not None:
                     #progress_bar = tqdm(total=total_size, unit='B', unit_scale=True, unit_divisor=1024)
-                    send_log('INFO - Downloading game... Please wait and be patient ;)')
+                    send_log('INFO - Downloading content... Please wait and be patient ;)')
                     #progress_bar.pack(side=tk.BOTTOM, fill=tk.X)
                     #progress_bar.set(0)
                     for data in response.iter_content(block_size):
@@ -361,20 +376,113 @@ def extract_zip(zip_file, destination):
 
             #progress_bar.close()
             send_log('INFO - Extraction completed!')
-            try:
-                game_zip_path = os.path.join(os.getcwd(), "game.zip")
-                if os.path.exists(game_zip_path):
-                    os.remove(game_zip_path)
-                send_log("INFO - Successfully deleted temp files!")
-            except Exception as e:
-                send_log(f"ERROR - {e}")
     except zipfile.BadZipFile as e:
         send_log(f"ERROR - {e}")
+
+    try:
+        game_zip_path = os.path.join(os.getcwd(), "game.zip")
+        if os.path.exists(game_zip_path):
+            os.remove(game_zip_path)
+            send_log("INFO - Successfully deleted temp files!")
+    except Exception as e:
+        send_log(f"ERROR - {e}")
+
+def extract_zip_mods(zip_file, destination):
+    try:
+        if zip_file is None:
+            send_log("ERROR - No zip file provided for extraction.")
+            return
+
+        mods_folder = os.path.join(destination, "assets", "UltimMC", "instances", "VL4", ".minecraft", "mods")
+        extract_dest = os.path.join(destination, "assets", "UltimMC", "instances", "VL4", ".minecraft", "mods")
+        if os.path.exists(mods_folder):
+            shutil.rmtree(mods_folder)
+            send_log("INFO - Existing mods folder deleted.")
+
+        with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+            total_size = sum(file.file_size for file in zip_ref.infolist())
+
+            for file in zip_ref.infolist():
+                zip_ref.extract(file, extract_dest)
+                send_log(f"Extracting mods... Please be patient ;)")
+
+            send_log('INFO - Modpack extraction completed!')
+    except zipfile.BadZipFile as e:
+        send_log(f"ERROR - {e}")
+
+    try:
+        mods_zip_path = os.path.join(os.getcwd(), "mods.zip")
+        if os.path.exists(mods_zip_path):
+            os.remove(mods_zip_path)
+            send_log("INFO - Successfully deleted temp files!")
+    except Exception as e:
+        send_log(f"ERROR - {e}")
+
+def extract_zip_skins(zip_file, destination):
+    try:
+        if zip_file is None:
+            send_log("ERROR - No zip file provided for extraction.")
+            return
+
+        skins_folder = os.path.join(destination, "assets", "UltimMC", "instances", "VL4", ".minecraft", "cachedImages")
+        extract_dest = os.path.join(destination, "assets", "UltimMC", "instances", "VL4", ".minecraft")
+        if os.path.exists(skins_folder):
+            shutil.rmtree(skins_folder)
+            send_log("INFO - Existing skins folder deleted.")
+
+        with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+            total_size = sum(file.file_size for file in zip_ref.infolist())
+
+            for file in zip_ref.infolist():
+                zip_ref.extract(file, extract_dest)
+                send_log(f"Extracting skins... Please be patient ;)")
+
+            send_log('INFO - Skins extraction completed!')
+    except zipfile.BadZipFile as e:
+        send_log(f"ERROR - {e}")
+
+    try:
+        skins_zip_path = os.path.join(os.getcwd(), "skins.zip")
+        if os.path.exists(skins_zip_path):
+            os.remove(skins_zip_path)
+            send_log("INFO - Successfully deleted temp files!")
+    except Exception as e:
+        send_log(f"ERROR - {e}")
+
+def download_mods():
+    #mariusskrasavcevs2
+    mods_url = "https://dl.dropboxusercontent.com/scl/fi/dlmzkk91mar32vpkzvh8z/mods.zip?rlkey=b2bse9kgdbuw2t65l6c7bx60x&dl=0"
+    destination = download_file(mods_url, 'mods.zip')
+    return destination
+
+def download_launcher():
+    #mini13lolix
+    game_url = "https://dl.dropboxusercontent.com/scl/fi/uskzkarcc5laq8rorvh7h/game.zip?rlkey=gzdsxkev2uvs54q8agaavb4p3&dl=0"
+    destination = download_file(game_url, 'game.zip')
+    return destination
+
+def download_skins():
+    #google
+    skins_url = "https://drive.google.com/uc?export=download&id=1udsB2FIxho0DLZxcjDSHmrJ0OQdIMrzL"
+    destination = download_file(skins_url, 'skins.zip')
+    return destination
 
 def fetch_local_version():
     config = configparser.ConfigParser()
     config.read('config.ini')
     local_version = config.get('GAME', 'version')
+    return local_version
+
+def fetch_local_mod_version():
+    config = configparser.ConfigParser()
+    config.read('modpack.ini')
+    local_mod_version = config.get('MODPACK', 'version')
+    return local_mod_version
+
+def fetch_launcher_local_version():
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    local_version = config.get('LAUNCHER', 'version')
     return local_version
 
 def fetch_version_info():
@@ -386,22 +494,14 @@ def fetch_version_info():
         response = requests.get(url)
         response.raise_for_status()
         version_number = response.text.strip()
-        #spinner.succeed("INFO - Version fetched successfully!")
         send_log("INFO - Version fetched successfully!")
         return version_number
     except requests.exceptions.RequestException as e:
-        #spinner.fail(f"ERROR - Failed to fetch version: {e}")
         send_log(f"ERROR - Failed to fetch version: {e}")
         return None
 
 def compare_versions(local_version, online_version):
     return local_version != online_version
-
-def download_launcher():
-    game_url = "https://dl.dropboxusercontent.com/scl/fi/bc2lo7t4bksq8hb5m1ckk/game.zip?rlkey=dy1ifw71jbhxi1lef035anew8&dl=0" #PUT HERE GAME LINK
-    #game_url = "https://jekabpils-my.sharepoint.com/personal/mariuss_krasavcevs_edu_jekabpils_lv/_layouts/15/download.aspx?UniqueId=79fad2d3-45ed-40f9-aaa7-83690140ba0e"
-    destination = download_file(game_url, 'game.zip')
-    return destination
 
 def update_local_config(new_version):
     config = configparser.ConfigParser()
@@ -410,6 +510,60 @@ def update_local_config(new_version):
     config['GAME']['version'] = new_version
     
     with open('config.ini', 'w') as config_file:
+        config.write(config_file)
+
+def fetch_mod_version_info():
+    send_log("INFO - Fetching modpack version info")
+    time.sleep(2)
+
+    url = "https://drive.google.com/uc?export=download&id=1NpkzTPb4HoYIwhY8Mii_K9Q2m7zyzvVG"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        version_number = response.text.strip()
+        send_log("INFO - Modpack version fetched successfully!")
+        return version_number
+    except requests.exceptions.RequestException as e:
+        send_log(f"ERROR - Failed to fetch modpack version: {e}")
+        return None
+
+def update_local_mod_config(new_version):
+    config = configparser.ConfigParser()
+    config.read('modpack.ini')
+
+    config['MODPACK']['version'] = new_version
+    
+    with open('modpack.ini', 'w') as config_file:
+        config.write(config_file)
+
+def fetch_skin_version_info():
+    send_log("INFO - Fetching skins version info")
+    time.sleep(2)
+
+    url = "https://drive.google.com/uc?export=download&id=1fH3d9UYgQ8_CCreh1NIFb0iKj2Ui3OaR"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        version_number = response.text.strip()
+        send_log("INFO - Skins version fetched successfully!")
+        return version_number
+    except requests.exceptions.RequestException as e:
+        send_log(f"ERROR - Failed to fetch skins version: {e}")
+        return None
+
+def fetch_local_skin_version():
+    config = configparser.ConfigParser()
+    config.read('modpack.ini')
+    local_skin_version = config.get('SKINS', 'version')
+    return local_skin_version
+
+def update_local_skin_config(new_version):
+    config = configparser.ConfigParser()
+    config.read('modpack.ini')
+
+    config['SKINS']['version'] = new_version
+    
+    with open('modpack.ini', 'w') as config_file:
         config.write(config_file)
 
 def change_username():
@@ -440,12 +594,49 @@ def check_updates():
             update_local_config(online_version)
             send_log(f"INFO - Game updated successfully to version {online_version}")
             time.sleep(5)
-            check_first_startup()
         else:
             send_log('INFO - Game is up to date!')
             time.sleep(1)
-            set_default_java(True)
-            check_first_startup()
+
+        online_mod_version = fetch_mod_version_info()
+        local_mod_version = fetch_local_mod_version()
+
+        if online_mod_version is None:
+            send_log('ERROR - Failed to fetch modpack online version information.')
+            return
+
+        if compare_versions(local_mod_version, online_mod_version):
+            send_log(f"INFO - New {online_mod_version} version for modpack available. Downloading...")
+            zip_file = download_mods()
+            zip_file = os.path.join(os.getcwd(), "mods.zip")
+            extract_zip_mods(zip_file, os.getcwd())
+            update_local_mod_config(online_mod_version)
+            send_log(f"INFO - Modpack updated successfully to version {online_mod_version}")
+            time.sleep(5)
+        else:
+            send_log('INFO - Modpack is up to date!')
+            time.sleep(1)
+
+        online_skins_version = fetch_skin_version_info()
+        local_skins_version = fetch_local_skin_version()
+
+        if online_skins_version is None:
+            send_log('ERROR - Failed to fetch skins online version information.')
+            return
+
+        if compare_versions(local_skins_version, online_skins_version):
+            send_log(f"INFO - New {online_skins_version} version for skins available. Downloading...")
+            zip_file = download_skins()
+            zip_file = os.path.join(os.getcwd(), "skins.zip")
+            extract_zip_skins(zip_file, os.getcwd())
+            update_local_skin_config(online_skins_version)
+            send_log(f"INFO - Skins updated successfully to version {online_skins_version}")
+            time.sleep(5)
+        else:
+            send_log('INFO - Skins are up to date!')
+            time.sleep(1)
+
+        check_first_startup()
     except Exception as e:
         send_log(f"ERROR - {e}")
 
@@ -467,6 +658,8 @@ def check_first_startup():
         send_log("INFO - Starting first stratup screen...")
         #REDIST JAVA
         install_redist()
+        #update condfigs
+        copy_configs_fse()
         # username input and generate data
         set_username()
         #RAM
@@ -487,10 +680,12 @@ def check_first_startup():
         buttons_ready()
         send_log("INFO - Game is ready!")
     else:
+        send_log("INFO - Game is ready!")
         buttons_ready()
 
 def exit_launcher():
     root.destroy()
+    RPC.close()
     subprocess.call(['taskkill', '/F', '/IM', 'launcher_gui.exe'])
     subprocess.call(['taskkill', '/F', '/IM', 'python.exe'])
 
@@ -514,6 +709,20 @@ def open_minecraft_folder():
     minecraft_folder = os.path.join(current_directory, "assets", "UltimMC", "instances", "VL4", ".minecraft")
     os.startfile(minecraft_folder)
 
+def show_play_count_button():
+    send_log('-------------------------------------------------')
+    send_log(f"Total time played on VL4: {get_time_played()}")
+    send_log('-------------------------------------------------')
+
+def copy_configs_fse():
+    current_directory = os.getcwd()
+    default_folder = os.path.join(current_directory, "assets", "default", "UltimMC")
+    where_copy = os.path.join(current_directory, "assets")
+    destination_folder = os.path.join(where_copy, "UltimMC")
+    
+    shutil.copytree(default_folder, destination_folder, dirs_exist_ok=True)
+    send_log(f"INFO - Configs updated!")
+
 def buttons_ready():
     start_button.configure(state=tk.NORMAL)
     change_username_button.configure(state=tk.NORMAL)
@@ -521,6 +730,7 @@ def buttons_ready():
     #change_runtime_button.configure(state=tk.NORMAL)
     check_updates_button.configure(state=tk.NORMAL)
     open_minecraft_folder_button.configure(state=tk.NORMAL)
+    show_play_count_button.configure(state=tk.NORMAL)
 
 def buttons_busy():
     start_button.configure(state=tk.DISABLED)
@@ -529,6 +739,7 @@ def buttons_busy():
     #change_runtime_button.configure(state=tk.DISABLED)
     check_updates_button.configure(state=tk.DISABLED)
     open_minecraft_folder_button.configure(state=tk.DISABLED)
+    show_play_count_button.configure(state=tk.DISABLED)
 
 
 root = customtkinter.CTk()
@@ -550,6 +761,9 @@ button_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
 start_button = customtkinter.CTkButton(button_frame, text="Start Game", command=start_current_game, state=tk.DISABLED)
 start_button.pack(fill=tk.X)
+
+show_play_count_button = customtkinter.CTkButton(button_frame, text="Show Playtime", command=show_play_count_button, state=tk.DISABLED)
+show_play_count_button.pack(fill=tk.X)
 
 change_username_button = customtkinter.CTkButton(button_frame, text="Change Username", command=change_username, state=tk.DISABLED)
 change_username_button.pack(fill=tk.X)
@@ -603,9 +817,11 @@ def main():
 
     welcome_thread = threading.Thread(target=welcome_screen)
     updates_thread = threading.Thread(target=check_updates)
+    presence_thread = threading.Thread(target=start_discord_presence)
 
     welcome_thread.start()
     updates_thread.start()
+    presence_thread.start()
 
     root.mainloop()
 
