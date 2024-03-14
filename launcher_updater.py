@@ -91,7 +91,9 @@ def compare_versions(local_version, online_version):
     return local_version != online_version
 
 def download_launcher():
-    launcher_url = "https://dl.dropboxusercontent.com/scl/fi/5jrnlg5yzdgtzzbtfidpf/launcher.zip?rlkey=lxndou25mr1ylsrgfejwnxhxs&dl=0"
+    #launcher_url = "https://dl.dropboxusercontent.com/scl/fi/5jrnlg5yzdgtzzbtfidpf/launcher.zip?rlkey=lxndou25mr1ylsrgfejwnxhxs&dl=0"
+    #mini10lolix
+    launcher_url = "https://dl.dropboxusercontent.com/scl/fi/ikkj4j0ku84fkg9ydoi6i/launcher.zip?rlkey=2mucktvvwnryb2bnd7yuzh7te&dl=0"
     destination = download_file(launcher_url, 'launcher.zip')
     return destination
 

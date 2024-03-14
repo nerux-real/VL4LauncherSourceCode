@@ -22,8 +22,6 @@ import gdown
 from pypresence import Presence
 import shutil
 
-customtkinter.set_appearance_mode("dark")
-
 def check_discord_process():
     for process in psutil.process_iter(['name']):
         if process.info['name'] == 'Discord.exe':
@@ -41,6 +39,24 @@ def start_discord_presence():
             large_image="vlll",
             large_text="VL Launcher",
         )
+
+def create_configs_if_not_exist():
+    config = configparser.ConfigParser()
+
+    default_config = {
+        'MODPACK': {'version': '0.0.0'},
+        'SKINS': {'version': '0.0.0'}
+    }
+
+    config_file = 'modpack.ini'
+    if not os.path.exists(config_file):
+        with open(config_file, 'w') as file:
+            config.read_dict(default_config)
+            config.write(file)
+
+customtkinter.set_appearance_mode("dark")
+start_discord_presence()
+create_configs_if_not_exist()
 
 def send_log(message):
     if threading.current_thread() is threading.main_thread():
@@ -741,6 +757,26 @@ def buttons_busy():
     open_minecraft_folder_button.configure(state=tk.DISABLED)
     show_play_count_button.configure(state=tk.DISABLED)
 
+def check_update_thread():
+    updates_thread = threading.Thread(target=check_updates)
+    updates_thread.start()
+
+def get_server_info():
+    url = "https://api.mcsrvstat.us/3/37.230.138.199:25581"
+    
+    try:
+        response = requests.get(url)
+        data = response.json()
+
+        version = data.get('version', None)
+        is_online = data.get('online', False)
+        online_player_count = data['players']['online'] if 'players' in data and 'online' in data['players'] else None
+        max_player_count = data['players']['max'] if 'players' in data and 'max' in data['players'] else None
+
+        return version, is_online, online_player_count, max_player_count
+    except Exception as e:
+        send_log(f"ERROR - {e}")
+        return None
 
 root = customtkinter.CTk()
 root.title("VL4 Launcher")
@@ -771,13 +807,10 @@ change_username_button.pack(fill=tk.X)
 set_ram_button = customtkinter.CTkButton(button_frame, text="Allocate RAM", command=set_startup_ram, state=tk.DISABLED)
 set_ram_button.pack(fill=tk.X)
 
-#change_runtime_button = customtkinter.CTkButton(button_frame, text="Change Runtime", command=change_runtime, state=tk.DISABLED)
-#change_runtime_button.pack(fill=tk.X)
-
 open_minecraft_folder_button = customtkinter.CTkButton(button_frame, text="Open .minecraft folder", command=open_minecraft_folder, state=tk.DISABLED)
 open_minecraft_folder_button.pack(fill=tk.X)
 
-check_updates_button = customtkinter.CTkButton(button_frame, text="Check Updates", command=check_updates, state=tk.DISABLED)
+check_updates_button = customtkinter.CTkButton(button_frame, text="Check Updates", command=check_update_thread, state=tk.DISABLED)
 check_updates_button.pack(fill=tk.X)
 
 exit_button = customtkinter.CTkButton(button_frame, text="Exit Launcher", command=exit_launcher)
@@ -802,8 +835,25 @@ progress_bar.pack_forget()
 
 #ram_combo_menu.bind("<<ComboboxSelected>>", update_ram_config)
 
-#ram_label = customtkinter.CTkLabel(button_frame, text="Select RAM for game:")
-#ram_label.pack(side=tk.BOTTOM, pady=11)
+def display_server_data():
+    data = get_server_info()
+
+    if data is not None:
+        version = data[0]
+        is_online = data[1]
+        online_player_count = data[2]
+        max_player_count = data[3]
+        bullet_points = ('\u2022') * 30
+
+        send_log(f"INFO - {version}, is_online={is_online}, {online_player_count}/{max_player_count}")
+        
+        server_status = 'Online: True' if is_online else 'Online: False'
+        server_label = customtkinter.CTkLabel(button_frame, text=f"VL4 SERVER STATUS\n{bullet_points}\n{server_status}\nVersion: {version}\nPlayers: {online_player_count}/{max_player_count}\n{bullet_points}", fg_color=("dark green"), corner_radius=8)
+    else:
+        send_log(f"ERROR - Failed to fetch server information!")
+        server_label = customtkinter.CTkLabel(button_frame, text=f"VL4 SERVER STATUS\n{bullet_points}\nFailed to fetch\nserver information\n{bullet_points}", fg_color=("dark red"), corner_radius=8)
+        
+    server_label.pack(side=tk.BOTTOM, pady=11)
 
 def fetch_launcher_version():
     config = configparser.ConfigParser()
@@ -817,11 +867,11 @@ def main():
 
     welcome_thread = threading.Thread(target=welcome_screen)
     updates_thread = threading.Thread(target=check_updates)
-    presence_thread = threading.Thread(target=start_discord_presence)
+    display_server_data_thread = threading.Thread(target=display_server_data)
 
     welcome_thread.start()
     updates_thread.start()
-    presence_thread.start()
+    display_server_data_thread.start()
 
     root.mainloop()
 
