@@ -701,7 +701,6 @@ def check_first_startup():
 
 def exit_launcher():
     root.destroy()
-    RPC.close()
     subprocess.call(['taskkill', '/F', '/IM', 'launcher_gui.exe'])
     subprocess.call(['taskkill', '/F', '/IM', 'python.exe'])
 
@@ -847,8 +846,12 @@ def display_server_data():
 
         send_log(f"INFO - {version}, is_online={is_online}, {online_player_count}/{max_player_count}")
         
-        server_status = 'Online: True' if is_online else 'Online: False'
-        server_label = customtkinter.CTkLabel(button_frame, text=f"VL4 SERVER STATUS\n{bullet_points}\n{server_status}\nVersion: {version}\nPlayers: {online_player_count}/{max_player_count}\n{bullet_points}", fg_color=("dark green"), corner_radius=8)
+        if is_online:
+            server_status = 'Online: True' 
+            server_label = customtkinter.CTkLabel(button_frame, text=f"VL4 SERVER STATUS\n{bullet_points}\n{server_status}\nVersion: {version}\nPlayers: {online_player_count}/{max_player_count}\n{bullet_points}", fg_color=("dark green"), corner_radius=8)
+        else:
+            server_status = 'Online: False'
+            server_label = customtkinter.CTkLabel(button_frame, text=f"VL4 SERVER STATUS\n{bullet_points}\n{server_status}\nVersion: {version}\nPlayers: 0/0\n{bullet_points}", fg_color=("dark red"), corner_radius=8)
     else:
         send_log(f"ERROR - Failed to fetch server information!")
         server_label = customtkinter.CTkLabel(button_frame, text=f"VL4 SERVER STATUS\n{bullet_points}\nFailed to fetch\nserver information\n{bullet_points}", fg_color=("dark red"), corner_radius=8)
@@ -876,12 +879,12 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        pass
-    else:
-        root = tk.Tk()
-        root.withdraw()
-        messagebox.showerror("Error", "Parent process information missing. Try starting launcher from launcher_updater.exe")
-        sys.exit(1)
+    #if len(sys.argv) > 1:
+    #    pass
+    #else:
+    #    root = tk.Tk()
+    #    root.withdraw()
+    #    messagebox.showerror("Error", "Parent process information missing. Try starting launcher from launcher_updater.exe")
+    #    sys.exit(1)
 
     main()
