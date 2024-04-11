@@ -5,6 +5,7 @@ import json
 import os
 import time
 import uuid
+import shutil
 
 def set_user_data(username):
     current_directory = os.getcwd()
@@ -100,10 +101,20 @@ def set_startup_ram(ram_value):
         f.truncate()
     return
 
+def copy_configs_fse():
+    current_directory = os.getcwd()
+    default_folder = os.path.join(current_directory, "assets", "default", "UltimMC")
+    where_copy = os.path.join(current_directory, "assets")
+    destination_folder = os.path.join(where_copy, "UltimMC")
+    
+    shutil.copytree(default_folder, destination_folder, dirs_exist_ok=True)
+    return
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Set user data for fcc.exe args')
     parser.add_argument('-u', '--username', type=str, help='Username to set')
     parser.add_argument('-r', '--ram', type=str, help='RAM to allocate')
+    parser.add_argument('-ccfg', '--copyconfigs', action='store_true', help='Copy default configs')
     args = parser.parse_args()
 
     if args.username:
@@ -115,3 +126,8 @@ if __name__ == "__main__":
         set_startup_ram(args.ram)
     else:
         print("ERROR - fcc.exe invalid RAM.")
+
+    if args.copyconfigs:
+        copy_configs_fse()
+    else:
+        print("ERROR - fcc.exe invalid configs.")
